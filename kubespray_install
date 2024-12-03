@@ -148,3 +148,7 @@ kubectl get nodes
 echo 'source <(kubectl completion bash)' >>~/.bashrc
 source ~/.bashrc
 
+Сделать редактор nano по умолчанию:
+export VISUAL=nano
+export EDITOR="$VISUAL"
+
