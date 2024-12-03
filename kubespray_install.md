@@ -52,8 +52,8 @@ pip install -U -r requirements.txt
 cp -rfp inventory/sample inventory/mycluster
 ```
 Указываем ip своих нод, которые будут в кластере kuberntes 
+declare -a IPS=(здесь в скобках перечислить все ip нод через пробел), в моем случае будет так:
 ```
-declare -a IPS=(здесь в скобках перечислить все ip нод через пробел), в моем случае будет там:
 declare -a IPS=(192.158.50.110 192.168.50.111 192.168.50.112 192.168.50.120 192.168.50.121 192.168.50.122)
 ```
 И записываем все эти ip в файлик host.yaml, через скрипт в директории contrib/inventory_builder/inventory.py ${IPS[@]}:
