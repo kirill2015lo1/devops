@@ -3,7 +3,8 @@
 По хорошему на нем уже заранее должны быть созданы ключи через `ssh-keygen`, и скопированны через `ssh-copy-id`,  на хосты, которые мы хоти поместить в кластер k8s
 Лучше изначально настроить ansible на этом же хосте, ведь он нуждается вышеперечисленных вещах
 
-Видео для визаульного понимаю установки:  
+Видео для визаульного понимаю установки: 
+
 https://www.youtube.com/watch?v=lvkpIoySt3U&t=1246s
 
 Заранее лучше через ansible выполнить команду, чтобы днс сервер на всех нодах, которые мы будет добавлять в кластер k8s был 8.8.8.8, это нужно для скачивания файлов при установке kubespray, команда такая:
@@ -36,7 +37,9 @@ source /root/study/venv/bin/activate
 ```
 cd /root/study/
 git clone https://github.com/kubernetes-sigs/kubespray.git
+```
 git checkout tags/(название версии kubespray, которую вы хотим использовать), посмотреть версии можно в гитхабе в релизах, в моем случае v2.23.0
+```
 git checkout tags/v2.23.0
 ```
 Переходим в скачанную директорию kubespray:
@@ -119,8 +122,9 @@ all:
       hosts: {}
 ```
 И далее надо подредактировать парметры самого кластера, ко которым он будет устанавливаться, и подредактироват addons, дополнения, которые будут установлены
-`/kubespray/inventory/mycluster/group_vars/k8s_cluster/addons.yml` - здесь лежат адоны
-`/kubespray/inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml`  - здесь лежат настройки кластера 
+
+/kubespray/inventory/mycluster/group_vars/k8s_cluster/addons.yml - здесь лежат адоны
+/kubespray/inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml  - здесь лежат настройки кластера
 
 Возможна ошибка при установке kubespray v2.23.0, команда которая решает эту проблему:
 ```
