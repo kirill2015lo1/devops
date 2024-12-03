@@ -6,7 +6,9 @@ https://metallb.io/installation/
 
 
 Для начала надо установить metallb внутри кластера kubernetes, он будет раздвать ip адреса:
-```kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml```
+```
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
+```
 
 Проверить установку можно командой:
 ```
@@ -14,6 +16,7 @@ kubectl get all -n metallb-system
 kubectl api-resources | grep metallb
 ```
 Чтобы matallb работал надо запустить:
+```
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -31,11 +34,11 @@ metadata:
 spec:
   ipAddressPools:
   - first-pool
-
+```
 После этого адреса будут раздавать в указанном диапазоне
 
 При создании loadbalacner можно указать, какой ip он будет получать:
-
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -49,3 +52,4 @@ spec:
       targetPort: 8080
   selector:
     app: my-app
+```
