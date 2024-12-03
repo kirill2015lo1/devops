@@ -119,10 +119,9 @@ all:
       hosts: {}
 ```
 И далее надо подредактировать парметры самого кластера, ко которым он будет устанавливаться, и подредактироват addons, дополнения, которые будут установлены
-```
-/kubespray/inventory/mycluster/group_vars/k8s_cluster/addons.yml - здесь лежат адоны
-/kubespray/inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml  - здесь лежат настройки кластера 
-```
+`/kubespray/inventory/mycluster/group_vars/k8s_cluster/addons.yml` - здесь лежат адоны
+`/kubespray/inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml`  - здесь лежат настройки кластера 
+
 Возможна ошибка при установке kubespray v2.23.0, команда которая решает эту проблему:
 ```
 pip install ansible-core==2.14.11
@@ -153,7 +152,7 @@ nano /root/.kube/config
 ```
 И сохраняем туда, что скопировали до этого, и строчку `server: https://127.0.0.1:6433` меняем на ip хоста, c которого скопировали содержимое admin.conf, в моем случае:
 ```
-   server: https://192.168.50.110:6443
+server: https://192.168.50.110:6443
 ```
 Далее надо скачать саму команду kubectl, `https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/` ссылка на документацию по скачиванию, в моем случае:
 ```
