@@ -18,42 +18,52 @@ apt install git -y
 Скачиваем и настраиваем ansible, гайд по настроке в этом же репозитории 
 
 Скачиваем python3 и python3-venv:
+```
 apt install python3 -y
 apt install python3-venv
-
+```
 Создаем venv в папке в опередленной папке:
 python3 -m venv (здесь название папки)
 В моем случае это папка будет такая:
+```
 python3 -m venv /root/study/venv
-
+```
 Далее активируем виртуальное окружение:
+```
 source /root/study/venv/bin/activate
-
+```
 Далее переходим в директорию /root/study и копируем в нее репозиторий с kubespray:
+```
 cd /root/study/
 git clone https://github.com/kubernetes-sigs/kubespray.git
 git checkout tags/(название версии kubespray, которую вы хотим использовать), посмотреть версии можно в гитхабе в релизах, в моем случае v2.23.0
 git checkout tags/v2.23.0
-
+```
 Переходим в скачанную директорию kubespray:
+```
 cd kubespray
-
+```
 Устанавливаем в venv все зависимости, которые нужны kubespray:
+```
 pip install -U -r requirements.txt
-
+```
 Копируем директорию со стандартными настройки в отдельную директорию с названием mycluster, и уже ее будем настраивать
+```
 cp -rfp inventory/sample inventory/mycluster
-
+```
 Указываем ip своих нод, которые будут в кластере kuberntes 
+```
 declare -a IPS=(здесь в скобках перечислить все ip нод через пробел), в моем случае будет там:
 declare -a IPS=(192.158.50.110 192.168.50.111 192.168.50.112 192.168.50.120 192.168.50.121 192.168.50.122)
-
+```
 И записываем все эти ip в файлик host.yaml, через скрипт в директории contrib/inventory_builder/inventory.py ${IPS[@]}:
+```
 CONFIG_FILE=inventory/mycluster/hosts.yaml python3 contrib/inventory_builder/inventory.py ${IPS[@]} 
-
+```
 Далее переходим открываем только что созданный файл, и его редактируем под свои нужды:
+```
 nano inventory/mycluster/hosts.yaml 
-
+```
 Готовый файл у меня получился таким:
 all:
   hosts:
