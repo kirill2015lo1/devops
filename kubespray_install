@@ -122,3 +122,29 @@ ansible-playbook -i inventory/mycluster/ -u root -b -v --private-key=~/.ssh/id_r
 nano /inventory/mycluster/group_vars/all/all.yml 
 Обсуждение, где решение этой проблемы:
 https://github.com/kubernetes-sigs/kubespray/issues/9037
+
+Для того, чтобы можно было управлять кластером с управляющего хоста хоста, который не является master нодой, и не находится в кластере, надо выполнить команду:
+ansible master1 -m command -a 'cat /etc/kubernetes/admin.conf'
+
+Скопировать все выведеное содержимое и встав по пути ~/.kube/config, для этого надо:
+mkdir /root/.kube/
+nano /root/.kube/config
+И сохраняем туда, что скопировали до этого, и строчку server: https://127.0.0.1:6433 меняем на ip хоста, c которого скопировали содержимое admin.conf, в моем случае:
+   server: https://192.168.50.110:6443
+
+Далее надо скачать саму команду kubectl, https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/ ссылка на документацию по скачиванию, в моем случае:
+apt install curl -y
+curl -LO https://dl.k8s.io/release/`curl -LS https://dl.k8s.io/release/stable.txt`/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+Проверка установки kubectl:
+kubectl version --client
+
+Проверка правильной настройки kubectl для управлений кластером kubernetes:
+kubectl get nodes
+
+Настройки autocomplition:
+echo 'source <(kubectl completion bash)' >>~/.bashrc
+source ~/.bashrc
+
