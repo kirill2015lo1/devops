@@ -1,4 +1,4 @@
-Ссылка на хорошую статью на `github`, с хорошим обьяснение настройки:
+Ссылка на хорошую статью на github, с хорошим обьяснение настройки:
 https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/metallb-plus-nginx-ingress
 
 Ссылка на официальный сайт, для установки metallb:
