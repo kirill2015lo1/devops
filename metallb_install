@@ -9,9 +9,10 @@ https://metallb.io/installation/
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
 
 Проверить установку можно командой:
+```
 kubectl get all -n metallb-system
 kubectl api-resources | grep metallb
-
+```
 Чтобы matallb работал надо запустить:
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
