@@ -184,3 +184,7 @@ source /etc/bash_completion
 export VISUAL=nano
 export EDITOR="$VISUAL"
 ```
+Расширение vscode для автодополнения и для шаблонов(Code snippets) при создании yaml файлов:
+
+`Kubernetes Support`
+
