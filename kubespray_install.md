@@ -173,12 +173,7 @@ kubectl version --client
 ```
 kubectl get nodes
 ```
-Настройки autocomplition:
-```
-echo 'source <(kubectl completion bash)' >>~/.bashrc
-source ~/.bashrc
-source /etc/bash_completion
-```
+
 Сделать редактор nano по умолчанию:
 ```
 export VISUAL=nano
@@ -188,3 +183,18 @@ export EDITOR="$VISUAL"
 
 `Kubernetes Support`
 
+Настройки autocomplition:
+```
+echo 'source <(kubectl completion bash)' >>~/.bashrc
+source ~/.bashrc
+```
+Далее надо октрыть файл и вписать туда параметры:
+```
+nano ~/.bashrc
+```
+Добавьте следующий блок перед строкой source <(kubectl completion bash):
+```
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+fi
+```
