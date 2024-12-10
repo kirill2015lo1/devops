@@ -174,7 +174,11 @@ kubectl version --client
 kubectl get nodes
 ```
 
-Сделать редактор nano по умолчанию:
+Чтобы сделать редактор nano по умолчанию, надо открыть директорию для автозагрузки:
+```
+nano ~/.bashrc
+```
+И добавляем в конец строки:
 ```
 export VISUAL=nano
 export EDITOR="$VISUAL"
