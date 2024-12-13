@@ -65,7 +65,7 @@ spec:
         app:  nginx3
     spec:
       nodeSelector:
-       node-role.kubernetes.io/control-plane: "" #указание ключа и значение для label
+        node-role.kubernetes.io/control-plane: "" #указание ключа и значение для label
 ```
 Документация на использование taint для Pods: 
 
