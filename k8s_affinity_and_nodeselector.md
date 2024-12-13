@@ -126,7 +126,11 @@ spec:
           image: nginx
       tolerations:
         - key: "node-role.kubernetes.io/worker"
-          operator: "Equal"
-          value: "worker"
-          effect: "NoSchedule"
+          effect: "NoSchedule"  #будет толерантен к указанному ключу с любым значением
+```
+Но есть нам нужно чтобы была толерантность была к любым ключам и значениям, но только если у них effect: "NoSchedule" (полезно для сброра метрик), то мы меняем key на operator: exists :
+```
+      tolerations:
+        - operator: "Exists"    
+          effect: "NoSchedule"  #будет толерантен к любому ключу с любым значением с таким эффектом
 ```
