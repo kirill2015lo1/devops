@@ -12,7 +12,7 @@ kubectl label nodes <NODE_NAME> node-role.kubernetes.io/worker-
 
 https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 
-Используется для указание deployment на каких узлах надо разворачивать pods, в данном случае на нодах с label, которые умеют название <SOME_KEY> и со значением <SOME_VALUE>, 
+Используется для указание deployment на каких узлах надо разворачивать pods, в данном случае на нодах с label, которые умеют название node-role.kubernetes.io/control-plane и со значением "", не 
 буду создавать поды
 ```
 kind: Deployment
@@ -24,11 +24,10 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: <SOME_KEY>  # Указать label, по которому будет идти отбор, пример key: node-role.kubernetes.io/control-plane
-                operator: In     # In, NotIn, Exists, DoesNotExist, Gt и Lt
+              - key: node-role.kubernetes.io/control-plane  # Указать label, по которому будет идти отбор
+                operator: NotIn     # In, NotIn, Exists, DoesNotExist, Gt и Lt
                 values:
-                - <SOME_VALUE>   # значение label, пример -""
-                - <SOME_VALUE>
+                - ""   # значение label
 ```
 Конкретный пример, если при создании deployment мы укажем key: topology.kubernetes.io/zone, values: antarctica-east1 и antarctica-west1, то все Поды будут создаваться на узлах с label - topology.kubernetes.io/zone="antarctica-east1", или на узлах с label: topology.kubernetes.io/zone="antarctica-west1", но если из этих узлов будет узел с label - high: veryvery, все поды будут запускаться на нем, 
 пока ресурсы не истекут, ведь preferredDuringSchedulingIgnoredDuringExecution указывает предпочтительный узел:
