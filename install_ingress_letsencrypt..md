@@ -2,6 +2,12 @@
 
 https://cert-manager.io/docs/
 
+Ссылка на видео с хорошим обьяснением:
+
+https://www.youtube.com/watch?v=N7W_nsEA-Ao
+
+https://www.youtube.com/watch?v=DJ2sa49iEKo
+
 В нашем случае установка будет через yaml файла, ссылка на подробный гайд:
 
 https://cert-manager.io/docs/installation/kubectl/
