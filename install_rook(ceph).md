@@ -15,4 +15,5 @@ kubectl create -f crds.yaml -f common.yaml -f operator.yaml
 kubectl create -f cluster.yaml
 ```
 
-
+Ошибка с postgersql решается так:  
+https://hub.docker.com/_/postgres
