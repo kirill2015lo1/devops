@@ -18,7 +18,7 @@ kubectl create -f cluster.yaml
 Ошибка с postgersql решается так:  
 https://stackoverflow.com/questions/62697071/docker-compose-postgres-upgrade-initdb-error-directory-var-lib-postgresql-da
 
-Готовый код с базой, и выделение ей диска:
+Готовый код с развертыванием postgresql, и выделение ей диска:
 ```
 apiVersion: ceph.rook.io/v1
 kind: CephBlockPool
