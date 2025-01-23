@@ -69,3 +69,6 @@ spec:
     interval: 30s
     path: /metrics  
 ```
+
+Небольшая шпора по promql:  
+https://stepik.org/lesson/1305857/step/2?unit=1320830
