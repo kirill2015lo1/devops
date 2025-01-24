@@ -185,3 +185,56 @@ spec:
           persistentVolumeClaim:
             claimName: postgresql-pvc
 ```
+ВАРИАНТ ВЫШЕ УСТАРЕВШИЙ, сейчас делается так, при создании statefullset сразу можно указать pvc, который нужно создать, пример:
+```
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus-prometheus-kube-prometheus-prometheus
+  namespace: monitoring
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: prometheus-data # Имя, используемое StatefulSet
+      spec:
+        storageClassName: rook-ceph-block
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi # Размер хранилища
+```
+
+После установки ceph-rook можно изменить настройки ceph, и указать с каких нод какие диски будут добавляться в кластер, сначала выполняем:
+```
+kubectl edit CephCluster rook-ceph -n rook-ceph 
+```
+Далее добавлем и правим spec.storage.nodes : 
+```
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  cephVersion:
+    image: ceph/ceph:v17 # версия Ceph
+  dataDirHostPath: /var/lib/rook
+  storage:
+    useAllNodes: false # Отключаем использование всех узлов
+    useAllDevices: false # Отключаем использование всех устройств
+    nodes:
+      - name: node1 #как я понял указываем название ноды в кластере K8s, например worker1
+        devices:
+          - name: "sdb" # Укажите имя устройства
+          - name: "sdc"
+      - name: node2
+        devices:
+          - name: "sdb"
+          - name: "sdc"
+      - name: node3
+        devices:
+          - name: "sdb"
+          - name: "sdc"
+
+```
