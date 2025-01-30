@@ -1,4 +1,11 @@
 
+
+Если у вас docker-compose.yml называется по-другому, например my-compose.yml, то при запуске нужно указать его явно с флагом -f:
+
+```
+docker compose -f my-compose.yml up
+
+````
 установка для debian
 https://docs.docker.com/engine/install/debian/
 ```
