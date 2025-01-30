@@ -1,6 +1,41 @@
 
-wget https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
 
+services:
+  prometheus: #server
+    image: prom/prometheus # Имя образа, можно заменить на нужный
+    ports:
+      - "9090:9090"  # Проброс порта (локальный:контейнерный)
+    #environment:
+      #var: value2   # Переменные окружения
+    volumes:
+      - ../configs/prometheus.yaml:/etc/prometheus/prometheus.yaml  # Монтирование локальной папки в контейнер
+      - prometheusdata:/prometheus  # Хранение данных вне контейнера
+    restart: always  # Автоматический рестарт при сбое
+
+
+  grafana:
+    image: grafana/grafana  # Образ PostgreSQL
+    #environment:
+      #var: value2   # Переменные окружения
+    volumes:
+      - grafanadata:/var/lib/grafana  # Хранение данных вне контейнера
+    restart: always  # Автоматический рестарт при сбое
+    depends_on:
+      - prometheus  # Контейнер запускается после db
+    ports:
+      - "3000:3000"  # Проброс порта (локальный:контейнерный)
+
+
+volumes:
+  prometheusdata:  # Определение именованного тома для базы данных
+  grafanadata:
+
+wget https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
+tar xvf node_exporter-1.8.2.linux-amd64.tar.gz
+cd node_exporter-1.8.2.linux-amd64
+sudo cp node_exporter /usr/local/bin/
+
+ 
 docker compose -f prom-graphana.yaml up -d 
 docker compose -f prom-graphana.yaml down
 
