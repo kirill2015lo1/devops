@@ -1,5 +1,5 @@
 
-
+```
 services:
   prometheus: #server
     image: prom/prometheus # Имя образа, можно заменить на нужный
@@ -29,7 +29,7 @@ services:
 volumes:
   prometheusdata:  # Определение именованного тома для базы данных
   grafanadata:
-
+```
 wget https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
 tar xvf node_exporter-1.8.2.linux-amd64.tar.gz
 cd node_exporter-1.8.2.linux-amd64
