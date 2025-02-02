@@ -1,7 +1,7 @@
 rate 
 increase
 
-
+https://www.fosstechnix.com/prometheus-promql-tutorial-with-examples/
 
 Колличество ошибок в минут
 sum(increase(flask_app_requests_total {job="test", http_status=~"4.+|5.+"}[1m])) by (http_status)
