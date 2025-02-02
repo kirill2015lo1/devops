@@ -71,7 +71,7 @@ prometheus-data-prometheus-prometheus-kube-prometheus-prometheus-0         Bound
 
 Если helm chart уже установлен, но перед этим pvc не были указаны, то сначала запрашиваем текущие values:
 ```
-helm get values prometheus -n monitoring -o yaml > values.yaml
+helm get values prometheus -n monitoring --all -o yaml > values.yaml
 ```
 Дале правим prometheusSpec.storageSpec и alertmanagerSpec.storage по примеру выше, и выполняем команду для применения изменений:
 ```
