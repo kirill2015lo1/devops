@@ -238,3 +238,6 @@ spec:
           - name: "sdc"
 
 ```
+Полезные видосы:  
+https://www.youtube.com/watch?v=pG1pxnfplsc&t=699s  
+https://www.youtube.com/watch?v=wIRMxl_oEMM
