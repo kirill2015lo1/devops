@@ -12,3 +12,11 @@ sum(rate(flask_app_requests_total {job="test"}[1m])) by (http_status)
 
 sum(increase(flask_app_requests_total {job="test", http_status=~"2.+|3.+"}[1m])) / sum(increase(flask_app_requests_total {job="test"}[1m]))
 Процент успешных запросов общего числа в минуту, должно быть близко к 100 процентам
+
+
+квантиль:  
+histogram_quantile( 0.50,
+    sum(rate(flask_app_request_latency_seconds_bucket{job="test"}[1m])) by (le,method)
+)
+legend:  
+99-{{method}}
