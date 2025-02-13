@@ -60,6 +60,24 @@ helm show values prometheus-community/kube-prometheus-stack > values.yaml
 
     retentionSize: "7Gi"
 ```
+deployment grafana, через edit меняем на statefulset и заполняем хранилище по примеру:
+```
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      name: storage
+    spec:
+      accessModes:
+      - ReadWriteMany
+      resources:
+        requests:
+          storage: 5Gi
+      storageClassName: rook-cephfs
+      volumeMode: Filesystem
+```
+
 
 Далее полняем команду:
 ```
@@ -67,10 +85,11 @@ helm install prometheus prometheus-community/kube-prometheus-stack --namespace m
 ```
 Теперь, если все сделано нормально, можно посмотреть, будет два pvc:
 ```
-venv) root@debian:~/study# kubectl get pvc -n monitoring 
-NAME                                                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      VOLUMEATTRIBUTESCLASS   AGE
-alertmanager-data-alertmanager-prometheus-kube-prometheus-alertmanager-0   Bound    pvc-dcd43580-0fd1-4593-84e2-256f551314bc   10Gi       RWO            rook-ceph-block   <unset>                 16m
-prometheus-data-prometheus-prometheus-kube-prometheus-prometheus-0         Bound    pvc-47729269-91eb-49fb-bc7c-5063aaca2cb2   50Gi       RWO            rook-ceph-block   <unset>                 16m
+(venv) root@debian:~/study/flask_app_k8s# kubectl get pvc -n monitoring 
+NAME                                                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+alertmanager-data-alertmanager-prometheus-kube-prometheus-alertmanager-0   Bound    pvc-83293887-866d-4043-af19-45793693c9a2   5Gi        RWX            rook-cephfs    <unset>                 21m
+prometheus-data-prometheus-prometheus-kube-prometheus-prometheus-0         Bound    pvc-5d0de89c-b93c-42f2-8dde-76744e0f09ad   10Gi       RWX            rook-cephfs    <unset>                 22m
+storage-prometheus-grafana-0                                               Bound    pvc-9f94ab5f-8aac-4a44-bd35-b9bb5f21be43   5Gi        RWX            rook-cephfs    <unset>                 7m42s
 ```
 
 Если helm chart уже установлен, но перед этим pvc не были указаны, то сначала запрашиваем текущие values:
