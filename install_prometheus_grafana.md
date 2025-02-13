@@ -58,7 +58,7 @@ helm show values prometheus-community/kube-prometheus-stack > values.yaml
 ```
     retention: 10d
 
-    retentionSize: 7Gi
+    retentionSize: "7Gi"
 ```
 
 Далее полняем команду:
