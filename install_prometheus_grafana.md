@@ -30,17 +30,16 @@ helm show values prometheus-community/kube-prometheus-stack > values.yaml
 ```
 Открываем values.yaml, для prometheus ищем `prometheusSpec.storageSpec` и заполняем по примеру:
 ```
-    storageSpec:
+    storageSpec: 
       volumeClaimTemplate:
         metadata:
-          name: prometheus-data # кратенькое описание, будет в названии к pvc
+          name: prometheus-data
         spec:
-          accessModes:
-          - ReadWriteOnce
+          storageClassName: rook-cephfs
+          accessModes: ["ReadWriteMany"]
           resources:
             requests:
-              storage: 50Gi  #размер, который нам нужен
-          storageClassName: rook-ceph-block #Название ранее созданого storageclass
+              storage: 10Gi
 ```
 Для alertmanager ищем alertmanagerSpec.storage и заполняем по такому же примеру:
 ```
@@ -49,12 +48,19 @@ helm show values prometheus-community/kube-prometheus-stack > values.yaml
         metadata:
           name: alertmanager-data
         spec:
-          accessModes:
-          - ReadWriteOnce
+          storageClassName: rook-cephfs
+          accessModes: ["ReadWriteMany"]
           resources:
             requests:
-              storage: 10Gi
-          storageClassName: rook-ceph-block
+              storage: 5Gi
+```
+Еще можно сократить дней, скольок хранятся метрики, и их максимальный размер:
+```
+    retention: 10d
+
+    ## Maximum size of metrics
+    ##
+    retentionSize: 7Gi
 ```
 
 Далее полняем команду:
