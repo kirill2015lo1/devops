@@ -58,8 +58,6 @@ helm show values prometheus-community/kube-prometheus-stack > values.yaml
 ```
     retention: 10d
 
-    ## Maximum size of metrics
-    ##
     retentionSize: 7Gi
 ```
 
