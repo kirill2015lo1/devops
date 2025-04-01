@@ -22,7 +22,7 @@ apt install git -y
 Скачиваем python3 и python3-venv:
 ```
 apt install python3 -y
-apt install python3-venv
+apt install python3-venv -y
 ```
 Создаем venv в папке в опередленной папке:
 python3 -m venv (здесь название папки)
