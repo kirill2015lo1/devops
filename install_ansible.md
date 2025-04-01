@@ -1,7 +1,9 @@
 Нам нужен хост, который будет в качестве управление через ansible другими хостами, на главном хосте и на удаленных нодах должен быть установлен ssh
 
 Потом качаем и устанавливаем ansible, инструкция на сайте тут:
-
+```
+sudo apt install wget gpg -y
+```
 https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html
 
 Как скачали и установили выполняем команду для создание ключей ssh:
