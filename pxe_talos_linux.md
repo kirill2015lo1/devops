@@ -37,9 +37,17 @@ sudo curl -L -o initramfs-amd64.xz \
   https://github.com/siderolabs/talos/releases/latest/download/initramfs-amd64.xz
 ```
 
+Примеры cozystack:
+```
 https://cozystack.io/docs/install/talos/pxe/
+```
 
+Ссылка на релизы талоса:
+```
+https://github.com/siderolabs/talos/releases
+```
 
-
+```
 echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 sysctl -p
+```
