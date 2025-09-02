@@ -160,31 +160,68 @@ machine:
     node.kubernetes.io/exclude-from-external-load-balancers: ""
     lol.kek: "test-worker"
 ```
+
+### конфиги генерим 
+```
+talosctl gen secrets -o secrets.yaml
+talosctl gen config --kubernetes-version 1.31.4 --with-secrets secrets.yaml my-cluster https://192.168.100.150:6443
+```
+
 ### Для мастер нод
 ```
-talosctl machineconfig patch controlplane.yaml --patch @patch_master1.yaml --output master1.yaml
-talosctl machineconfig patch controlplane.yaml --patch @patch_master2.yaml --output master2.yaml  
-talosctl machineconfig patch controlplane.yaml --patch @patch_master3.yaml --output master3.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master1.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master2.yaml  
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master3.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master4.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master5.yaml  
 ```
 
 ### Для воркер нод
 ```
-talosctl machineconfig patch worker.yaml --patch @patch_worker1.yaml --output worker1.yaml
-talosctl machineconfig patch worker.yaml --patch @patch_worker2.yaml --output worker2.yaml
-talosctl machineconfig patch worker.yaml --patch @patch_worker3.yaml --output worker3.yaml
+talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker1.yaml
+talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker2.yaml
+talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker3.yaml
+talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker4.yaml
+talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker5.yaml
 ```
 
-### юзаем на ноды
+### юзаем на ноды мастер
 ```
 talosctl apply-config --insecure -n 192.168.100. --file ./master1.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./master2.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./master3.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./worker0.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./master4.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./master5.yaml
+
+```
+### юзаем на ноды мастер
+```
 talosctl apply-config --insecure -n 192.168.100. --file ./worker1.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./worker2.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./worker3.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./worker4.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./worker5.yaml
 ```
+
+
 
 ### юзаем бутстрап на любую мастер ноду
 ```
-talosctl bootstrap --nodes 192.168.100. --endpoints 192.168.100. --talosconfig=./talosconfig
+talosctl bootstrap -n 192.168.100.101 -e 192.168.100.101 --talosconfig=./talosconfig
+```
+
+### с нее же забираем кубконфиг с vip и направляем кубконфиг на этот же vip 
+```
+talosctl kubeconfig ~/.kube/config -n 192.168.100.150 -e 192.168.100.150 --talosconfig ./talosconfig
+```
+
+### gping
+```
+gping 192.168.100.101 192.168.100.102 192.168.100.103 192.168.100.111 192.168.100.112 192.168.100.113 192.168.100.150 
+```
+
+
+### как посмотреть резолвы 
+```
+talosctl get resolvers -n 192.168.100.101 -e 192.168.100.150 --talosconfig=./talosconfig
 ```
