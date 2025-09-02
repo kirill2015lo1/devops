@@ -120,32 +120,71 @@ docker run -d --name matchbox --net host \
   -log-level=debug
 ```
 
-
-# Для мастер нод
-````
+### Пример патча для patch_master1.yaml
+```
+machine:
+  network:
+    interfaces:
+      - interface: ens19
+        addresses:
+          - 192.168.100.101/24
+        vip:
+          ip: 192.168.100.110
+    nameservers:
+      - 192.168.100.240
+      - 192.168.0.240
+      - 8.8.8.8
+      - 1.1.1.1
+    searchDomains:
+      - tsuran.local
+  nodeLabels:
+    node.kubernetes.io/exclude-from-external-load-balancers: ""
+    lol.kek: "test-master"
+```
+### Пример патча для patch_worker1.yaml
+```
+machine:
+  network:
+    interfaces:
+      - interface: ens19
+        addresses:
+          - 192.168.100.111/24
+    nameservers:
+      - 192.168.100.240
+      - 192.168.0.240
+      - 8.8.8.8
+      - 1.1.1.1
+    searchDomains:
+      - tsuran.local
+  nodeLabels:
+    node.kubernetes.io/exclude-from-external-load-balancers: ""
+    lol.kek: "test-worker"
+```
+### Для мастер нод
+```
 talosctl machineconfig patch controlplane.yaml --patch @patch_master1.yaml --output master1.yaml
 talosctl machineconfig patch controlplane.yaml --patch @patch_master2.yaml --output master2.yaml  
 talosctl machineconfig patch controlplane.yaml --patch @patch_master3.yaml --output master3.yaml
 ```
 
-# Для воркер нод
+### Для воркер нод
 ```
 talosctl machineconfig patch worker.yaml --patch @patch_worker1.yaml --output worker1.yaml
 talosctl machineconfig patch worker.yaml --patch @patch_worker2.yaml --output worker2.yaml
 talosctl machineconfig patch worker.yaml --patch @patch_worker3.yaml --output worker3.yaml
 ```
 
-# юзаем на ноды
-```talosctl apply-config --insecure -n 192.168.100. --file ./master1.yaml
+### юзаем на ноды
+```
+talosctl apply-config --insecure -n 192.168.100. --file ./master1.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./master2.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./master3.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./worker0.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./worker1.yaml
 talosctl apply-config --insecure -n 192.168.100. --file ./worker2.yaml
-
 ```
 
-# юзаем бутстрап на любую мастер ноду
-````
+### юзаем бутстрап на любую мастер ноду
+```
 talosctl bootstrap --nodes 192.168.100. --endpoints 192.168.100. --talosconfig=./talosconfig
 ```
