@@ -51,3 +51,101 @@ https://github.com/siderolabs/talos/releases
 echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 sysctl -p
 ```
+
+```
+sudo docker run --name=dnsmasq -d --cap-add=NET_ADMIN --net=host quay.io/poseidon/dnsmasq:v0.5.0-32-g4327d60-amd64 \
+  -d -q -p0 \
+  --dhcp-range=192.168.100.200,192.168.100.205 \
+  --dhcp-option=option:router,192.168.100.1 \
+  --enable-tftp \
+  --tftp-root=/var/lib/tftpboot \
+  --dhcp-match=set:bios,option:client-arch,0 \
+  --dhcp-boot=tag:bios,undionly.kpxe \
+  --dhcp-match=set:efi32,option:client-arch,6 \
+  --dhcp-boot=tag:efi32,ipxe.efi \
+  --dhcp-match=set:efibc,option:client-arch,7 \
+  --dhcp-boot=tag:efibc,ipxe.efi \
+  --dhcp-match=set:efi64,option:client-arch,9 \
+  --dhcp-boot=tag:efi64,ipxe.efi \
+  --dhcp-userclass=set:ipxe,iPXE \
+  --dhcp-boot=tag:ipxe,http://192.168.100.180:8080/boot.ipxe \
+  --log-queries \
+  --log-dhcp
+```
+
+```
+TALOS_VER="1.10.7"
+mkdir -p /pxe-talos/matchbox_image
+sudo chown $(id -u):$(id -g) /pxe-talos/matchbox_image -R
+cd /pxe-talos/matchbox_image
+curl -L -o /pxe-talos/matchbox_image/vmlinuz \
+  "https://github.com/siderolabs/talos/releases/download/v${TALOS_VER}/vmlinuz-amd64"
+curl -L -o /pxe-talos/matchbox_image/initramfs.xz \
+  "https://github.com/siderolabs/talos/releases/download/v${TALOS_VER}/initramfs-amd64.xz"
+cat << 'EOF' > /pxe-talos/matchbox_image/talos-default.json
+{
+  "id": "default",
+  "name": "default",
+  "boot": {
+    "kernel": "/assets/vmlinuz",
+    "initrd": ["/assets/initramfs.xz"],
+    "args": [
+      "initrd=initramfs.xz",
+      "init_on_alloc=1",
+      "slab_nomerge",
+      "pti=on",
+      "console=tty0",
+      "printk.devkmsg=on",
+      "talos.platform=metal"
+    ]
+  }
+}
+EOF
+
+cat << 'EOF' > /pxe-talos/matchbox_image/group-default.json
+{
+  "id": "default",
+  "name": "default",
+  "profile": "default"
+}
+EOF
+
+docker run -d --name matchbox --net host \
+  -v /pxe-talos/matchbox_image/initramfs.xz:/var/lib/matchbox/assets/initramfs.xz:ro \
+  -v /pxe-talos/matchbox_image/vmlinuz:/var/lib/matchbox/assets/vmlinuz:ro \
+  -v /pxe-talos/matchbox_image/talos-default.json:/var/lib/matchbox/profiles/default.json:ro \
+  -v /pxe-talos/matchbox_image/group-default.json:/var/lib/matchbox/groups/group-default.json:ro \
+  quay.io/poseidon/matchbox:latest \
+  -address=:8080 \
+  -log-level=debug
+```
+
+
+# Для мастер нод
+````
+talosctl machineconfig patch controlplane.yaml --patch @patch_master1.yaml --output master1.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master2.yaml --output master2.yaml  
+talosctl machineconfig patch controlplane.yaml --patch @patch_master3.yaml --output master3.yaml
+```
+
+# Для воркер нод
+```
+talosctl machineconfig patch worker.yaml --patch @patch_worker1.yaml --output worker1.yaml
+talosctl machineconfig patch worker.yaml --patch @patch_worker2.yaml --output worker2.yaml
+talosctl machineconfig patch worker.yaml --patch @patch_worker3.yaml --output worker3.yaml
+```
+
+# юзаем на ноды
+```talosctl apply-config --insecure -n 192.168.100. --file ./master1.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./master2.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./master3.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./worker0.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./worker1.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./worker2.yaml
+
+```
+
+# юзаем бутстрап на любую мастер ноду
+````
+talosctl bootstrap --nodes 192.168.100. --endpoints 192.168.100. --talosconfig=./talosconfig
+```
