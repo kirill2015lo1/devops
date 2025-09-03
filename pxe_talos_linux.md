@@ -120,7 +120,7 @@ docker run -d --name matchbox --net host \
   -log-level=debug
 ```
 
-### Пример патча для patch_master1.yaml
+### Пример патча для patch_master.yaml
 ```
 machine:
   network:
@@ -129,7 +129,7 @@ machine:
         addresses:
           - 192.168.100.101/24
         vip:
-          ip: 192.168.100.110
+          ip: 192.168.100.150
     nameservers:
       - 192.168.100.240
       - 192.168.0.240
@@ -141,7 +141,7 @@ machine:
     node.kubernetes.io/exclude-from-external-load-balancers: ""
     lol.kek: "test-master"
 ```
-### Пример патча для patch_worker1.yaml
+### Пример патча для patch_worker.yaml
 ```
 machine:
   network:
