@@ -20,22 +20,6 @@ nano ~/.ssh/authorized_keys
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
-Создаем директорию и качаем бинарники для dhcp:
-```
-cd /
-mkdir pxe-talos
-cd pxe-talos
-sudo curl -L -o /pxe-talos/undionly.kpxe  https://boot.ipxe.org/undionly.kpxe
-sudo curl -L -o /pxe-talos/ipxe.efi      https://boot.ipxe.org/ipxe.efi
-```
-
-Качаем talos 
-```
-sudo curl -L -o vmlinuz-amd64 \
-  https://github.com/siderolabs/talos/releases/latest/download/vmlinuz-amd64
-sudo curl -L -o initramfs-amd64.xz \
-  https://github.com/siderolabs/talos/releases/latest/download/initramfs-amd64.xz
-```
 
 Примеры cozystack:
 ```
@@ -52,6 +36,7 @@ echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 sysctl -p
 ```
 
+## Начала установка на бастионе
 ```
 sudo docker run --name=dnsmasq -d --cap-add=NET_ADMIN --net=host quay.io/poseidon/dnsmasq:v0.5.0-32-g4327d60-amd64 \
   -d -q -p0 \
@@ -120,8 +105,17 @@ docker run -d --name matchbox --net host \
   -log-level=debug
 ```
 
-### Пример патча для patch_master.yaml
+
+### создаем и переходим директорию для talos бутстрапа
 ```
+mkdir -p /pxe_talos/talos_bootstrap
+cd /pxe_talos/talos_bootstrap
+```
+
+
+### Пример патча для patch-master.yaml
+```
+cat << EOF > patch-master.yaml
 machine:
   network:
     interfaces:
@@ -130,6 +124,9 @@ machine:
           - 192.168.100.101/24
         vip:
           ip: 192.168.100.150
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.100.1
     nameservers:
       - 192.168.100.240
       - 192.168.0.240
@@ -140,15 +137,21 @@ machine:
   nodeLabels:
     node.kubernetes.io/exclude-from-external-load-balancers: ""
     lol.kek: "test-master"
+EOF
 ```
-### Пример патча для patch_worker.yaml
+
+### Пример патча для patch-worker.yaml
 ```
+cat << EOF > patch-worker.yaml
 machine:
   network:
     interfaces:
       - interface: ens19
         addresses:
           - 192.168.100.111/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.100.1
     nameservers:
       - 192.168.100.240
       - 192.168.0.240
@@ -159,6 +162,7 @@ machine:
   nodeLabels:
     node.kubernetes.io/exclude-from-external-load-balancers: ""
     lol.kek: "test-worker"
+EOF
 ```
 
 ### секреты генерим 
@@ -173,38 +177,38 @@ talosctl gen config --kubernetes-version 1.31.4 --with-secrets secrets.yaml my-c
 
 ### Для мастер нод
 ```
-talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master1.yaml
-talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master2.yaml  
-talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master3.yaml
-talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master4.yaml
-talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output master5.yaml  
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output desired-master1.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output desired-master2.yaml  
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output desired-master3.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output desired-master4.yaml
+talosctl machineconfig patch controlplane.yaml --patch @patch_master.yaml --output desired-master5.yaml  
 ```
 
 ### Для воркер нод
 ```
-talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker1.yaml
-talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker2.yaml
-talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker3.yaml
-talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker4.yaml
-talosctl machineconfig patch worker.yaml --patch @patch_worker.yaml --output worker5.yaml
+talosctl machineconfig patch worker.yaml --patch @patch-worker.yaml --output desired-worker1.yaml
+talosctl machineconfig patch worker.yaml --patch @patch-worker.yaml --output desired-worker2.yaml
+talosctl machineconfig patch worker.yaml --patch @patch-worker.yaml --output desired-worker3.yaml
+talosctl machineconfig patch worker.yaml --patch @patch-worker.yaml --output desired-worker4.yaml
+talosctl machineconfig patch worker.yaml --patch @patch-worker.yaml --output desired-worker5.yaml
 ```
 
 ### юзаем на ноды мастер
 ```
-talosctl apply-config --insecure -n 192.168.100. --file ./master1.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./master2.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./master3.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./master4.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./master5.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-master1.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-master2.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-master3.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-master4.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-master5.yaml
 
 ```
 ### юзаем на ноды мастер
 ```
-talosctl apply-config --insecure -n 192.168.100. --file ./worker1.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./worker2.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./worker3.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./worker4.yaml
-talosctl apply-config --insecure -n 192.168.100. --file ./worker5.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-worker1.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-worker2.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-worker3.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-worker4.yaml
+talosctl apply-config --insecure -n 192.168.100. --file ./desired-worker5.yaml
 ```
 
 
