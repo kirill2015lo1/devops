@@ -161,9 +161,13 @@ machine:
     lol.kek: "test-worker"
 ```
 
-### конфиги генерим 
+### секреты генерим 
 ```
 talosctl gen secrets -o secrets.yaml
+```
+
+### конфиги генерим 
+```
 talosctl gen config --kubernetes-version 1.31.4 --with-secrets secrets.yaml my-cluster https://192.168.100.150:6443
 ```
 
